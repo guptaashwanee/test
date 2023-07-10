@@ -1,0 +1,98 @@
+# The name of the workflow.
+name: Build and Deploy
+
+# Run the workflow when code is pushed to the main branch
+on:
+  push:
+    tags:
+      - "v*"
+  release:
+    types:
+      - published
+      
+# This is the workflow that is being run.
+jobs:
+  build-and-deploy:
+    # This is telling GitHub to run the workflow on the latest version of Ubuntu.
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code from the GitHub repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Docker client meta
+        id: client
+        uses: docker/metadata-action@v4
+        with:
+          images: guptaashwanee/anya-client
+          labels: |
+            org.opencontainers.image.title=ANSCER ANYA Client
+            org.opencontainers.image.description=Anscer Robotics (Robot Control Application) - Anya
+            org.opencontainers.image.vendor=ANSCER ROBOTICS
+      - name: Docker server meta
+        id: server
+        uses: docker/metadata-action@v4
+        with:
+          images: guptaashwanee/anya-server
+          labels: |
+            org.opencontainers.image.title=ANSCER ANYA Server
+            org.opencontainers.image.description=Anscer Robotics (Robot Control Application) - Anya
+            org.opencontainers.image.vendor=ANSCER ROBOTICS
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      # # Install dependencies and run tests for the client application
+      # - name: Install Anscer ANYA Client
+      #   working-directory: ./client
+      #   run: |
+      #     npm install
+      # # Install dependencies, export environment variables to be used by application and run tests for the server application
+      # - name: Install and Test Server
+      #   working-directory: ./server
+      #   run: |
+      #     npm install
+      #     export MONGODB_URI=$MONGODB_URI
+      #     export TOKEN_KEY=$TOKEN_KEY
+      #     export EMAIL=$EMAIL
+      #     export PASSWORD=$PASSWORD
+      #     npm run test
+      # Build a Docker image for the client application
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and Push Client Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: "{{defaultContext}}:client"
+          file: Dockerfile.prod
+          platforms: linux/amd64,linux/arm64/v8
+          push: true
+          # tags: guptaashwanee/anya-client:${{steps.client.outputs.tags}},guptaashwanee/anya-client:latest
+          tags: ${{ steps.client.outputs.tags }}
+          labels: ${{ steps.client.outputs.labels }}
+
+      - name: Build and Push Server Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: "{{defaultContext}}:server"
+          file: Dockerfile.prod
+          platforms: linux/amd64,linux/arm64/v8
+          push: true
+          # tags: guptaashwanee/anya-server:${{steps.meta.outputs.tags}},guptaashwanee/anya-server:latest
+          tags: ${{ steps.server.outputs.tags }}
+          labels: ${{ steps.server.outputs.labels }}
+      # This is the step that is deploying the application to Elastic Beanstalk.
+      # - name: Deploy to Elastic Beanstalk
+      #   uses: einaregilsson/beanstalk-deploy@v21
+      #   with:
+      #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     application_name: ${{ secrets.EB_APP_NAME }}
+      #     environment_name: ${{ secrets.EB_ENV_NAME }}
+      #     region: ${{ secrets.EB_REGION }}
+      #     version_label: "version-${{ github.run_number }}"
+      #     deployment_package: docker-compose.yml
