@@ -32,7 +32,7 @@ jobs:
             org.opencontainers.image.description=Anscer Robotics (Robot Control Application) - Anya
             org.opencontainers.image.vendor=ANSCER ROBOTICS
           tags: |
-            type=semver,pattern={{raw}}
+            type=raw,pattern={{raw}}
             type=raw,value=latest,enable=${{ !startsWith(github.ref, 'refs/tags/anscer-engine-v')  }}
       - name: Docker server meta
         id: server
@@ -44,7 +44,7 @@ jobs:
             org.opencontainers.image.description=Anscer Robotics (Robot Control Application) - Anya
             org.opencontainers.image.vendor=ANSCER ROBOTICS
           tags: |
-            type=semver,pattern={{raw}}
+            type=raw,pattern={{raw}}
             type=raw,value=latest,enable=${{ !startsWith(github.ref, 'refs/tags/anscer-engine-v')  }}
 
       - name: Log in to Docker Hub
