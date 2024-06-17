@@ -1,0 +1,8 @@
+FROM node:16.20.0-alpine3.18 as build
+
+WORKDIR /anya
+
+COPY index.html ./
+
+EXPOSE 80
+EXPOSE 443
