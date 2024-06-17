@@ -1,100 +1,55 @@
-# The name of the workflow.
 name: Build and Deploy
 
-# Run the workflow when code is pushed to the main branch
 on:
   release:
-    types:
-      - published
-# This is the workflow that is being run.
+    types: [published]
+
 jobs:
   build-and-deploy:
-    # This is telling GitHub to run the workflow on the latest version of Ubuntu.
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: "Client"
+            dockerfile: "client/Dockerfile.prod"
+            image: "guptaashwanee/test-client"
+            context: "client"
+          - name: "Server"
+            dockerfile: "server/Dockerfile.prod"
+            image: "guptaashwanee/test-server"
+            context: "server"
     steps:
-      # Checkout the code from the GitHub repository
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Docker client meta
-        id: client
-        uses: docker/metadata-action@v4
+        uses: docker/setup-buildx-action@v3
+      - name: Generate Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          images: guptaashwanee/anya-client
+          images: ${{ matrix.image }}
           labels: |
-            org.opencontainers.image.title=ANSCER ANYA Client
+            org.opencontainers.image.title=ANSCER ANYA ${{ matrix.name }}
             org.opencontainers.image.description=Anscer Robotics (Robot Control Application) - Anya
             org.opencontainers.image.vendor=ANSCER ROBOTICS
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
           flavor: |
-            latest=${{ startsWith(github.ref, 'refs/tags/v')  }}
-      - name: Docker server meta
-        id: server
-        uses: docker/metadata-action@v4
-        with:
-          images: guptaashwanee/anya-server
-          labels: |
-            org.opencontainers.image.title=ANSCER ANYA Server
-            org.opencontainers.image.description=Anscer Robotics (Robot Control Application) - Anya
-            org.opencontainers.image.vendor=ANSCER ROBOTICS
-          tags: |
-            type=raw,value={{raw}}
-            type=raw,value=latest,enable=${{ !startsWith(github.ref, 'refs/tags/anscer-engine-v')  }}
-
+            latest=${{ startsWith(github.ref, 'refs/tags/v') }}
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      # # Install dependencies and run tests for the client application
-      # - name: Install Anscer ANYA Client
-      #   working-directory: ./client
-      #   run: |
-      #     npm install
-      # # Install dependencies, export environment variables to be used by application and run tests for the server application
-      # - name: Install and Test Server
-      #   working-directory: ./server
-      #   run: |
-      #     npm install
-      #     export MONGODB_URI=$MONGODB_URI
-      #     export TOKEN_KEY=$TOKEN_KEY
-      #     export EMAIL=$EMAIL
-      #     export PASSWORD=$PASSWORD
-      #     npm run test
-      # Build a Docker image for the client application
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build and Push Client Docker Image
-        uses: docker/build-push-action@v4
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
         with:
-          context: "{{defaultContext}}:client"
-          file: Dockerfile.prod
+          context: ${{ matrix.context }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: ${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          # tags: guptaashwanee/anya-client:${{steps.client.outputs.tags}},guptaashwanee/anya-client:latest
-          tags: ${{ steps.client.outputs.tags }}
-          labels: ${{ steps.client.outputs.labels }}
-
-      - name: Build and Push Server Docker Image
-        uses: docker/build-push-action@v4
-        with:
-          context: "{{defaultContext}}:server"
-          file: Dockerfile.prod
-          platforms: linux/amd64,linux/arm64/v8
-          push: true
-          # tags: guptaashwanee/anya-server:${{steps.meta.outputs.tags}},guptaashwanee/anya-server:latest
-          tags: ${{ steps.server.outputs.tags }}
-          labels: ${{ steps.server.outputs.labels }}
-      # This is the step that is deploying the application to Elastic Beanstalk.
-      # - name: Deploy to Elastic Beanstalk
-      #   uses: einaregilsson/beanstalk-deploy@v21
-      #   with:
-      #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     application_name: ${{ secrets.EB_APP_NAME }}
-      #     environment_name: ${{ secrets.EB_ENV_NAME }}
-      #     region: ${{ secrets.EB_REGION }}
-      #     version_label: "version-${{ github.run_number }}"
-      #     deployment_package: docker-compose.yml
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
