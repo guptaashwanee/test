@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/guptaashwanee/test/compare/v1.2.0...v1.3.0) (2024-06-22)
+
+
+### Features
+
+* **docker build:** automatic docker build setup ([293ffda](https://github.com/guptaashwanee/test/commit/293ffdadd45633861bcf95907782ffe072dca160))
+
 ## [1.2.0](https://github.com/guptaashwanee/test/compare/v1.1.0...v1.2.0) (2024-06-21)
 
 
