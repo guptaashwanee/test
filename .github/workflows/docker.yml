@@ -76,10 +76,5 @@ jobs:
           platforms: linux/amd64,linux/arm64/v8
           push: true
           tags: |
-            ${{ 
-              github.event_name == 'workflow_dispatch' && github.event.inputs.custom_tags != '' 
-              ? join(map(steps.meta.outputs.tags, 
-                lambda tag: tag.split(':')[0] + ':' + github.event.inputs.custom_tags), ',') 
-              : steps.meta.outputs.tags 
-            }}
+            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.custom_tags != '' ? join(map(steps.meta.outputs.tags, lambda tag: tag.split(':')[0] + ':' + github.event.inputs.custom_tags), ',') : steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
