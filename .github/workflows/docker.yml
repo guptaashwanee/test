@@ -27,11 +27,11 @@ jobs:
       - id: set-matrix
         run: |
           if [ "${{ github.event.inputs.component }}" == "both" ]; then
-            echo "::set-output name=matrix::[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/anya-client','context':'client'},{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/anya-server','context':'server'}]"
+            echo "::set-output name=matrix::[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'},{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
           elif [ "${{ github.event.inputs.component }}" == "client" ]; then
-            echo "::set-output name=matrix::[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/anya-client','context':'client'}]"
+            echo "::set-output name=matrix::[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'}]"
           else
-            echo "::set-output name=matrix::[{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/anya-server','context':'server'}]"
+            echo "::set-output name=matrix::[{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
           fi
         shell: bash
 
@@ -51,7 +51,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Generate Docker Metadata
         id: meta
-        if: ${{ github.event_name != 'workflow_dispatch' }}
         uses: docker/metadata-action@v5
         with:
           images: ${{ matrix.image }}
