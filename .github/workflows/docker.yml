@@ -74,24 +74,7 @@ jobs:
       - name: Prepare Docker Tags
         id: prepare_tags
         if: github.event_name != 'release'
-        run: |
-          CUSTOM_TAGS="${{ github.event.inputs.custom_tags }}"
-          GENERATED_TAGS="${{ steps.meta.outputs.tags }}"
-          if [ -z "$CUSTOM_TAGS" ]; then
-            echo "CUSTOM_TAGS=$GENERATED_TAGS" >> $GITHUB_ENV
-            exit 0
-          fi
-          IFS=',' read -r -a CUSTOM_TAG_ARRAY <<< "$CUSTOM_TAGS"
-          IFS=',' read -r -a GENERATED_TAG_ARRAY <<< "$GENERATED_TAGS"
-          NEW_TAGS=""
-          for GENERATED_TAG in "${GENERATED_TAG_ARRAY[@]}"; do
-            BASE_TAG="${GENERATED_TAG%%:*}"
-            for CUSTOM_TAG in "${CUSTOM_TAG_ARRAY[@]}"; do
-              NEW_TAGS="$NEW_TAGS,$BASE_TAG:$CUSTOM_TAG"
-            done
-          done
-          NEW_TAGS="${NEW_TAGS#,}" # Remove leading comma
-          echo "CUSTOM_TAGS=$NEW_TAGS" >> $GITHUB_ENV
+        run: ./scripts/prepare_tags.sh
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
