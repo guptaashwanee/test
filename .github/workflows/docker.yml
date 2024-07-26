@@ -1,6 +1,8 @@
 name: Build and Deploy
 
 on:
+  release:
+    types: [created]
   workflow_dispatch:
     inputs:
       component:
@@ -24,14 +26,18 @@ jobs:
     steps:
       - id: set-matrix
         run: |
-          if [ "${{ github.event.inputs.component }}" == "both" ]; then
-            MATRIX="[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'},{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
-          elif [ "${{ github.event.inputs.component }}" == "client" ]; then
-            MATRIX="[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'}]"
+          if [ "${{ github.event_name }}" == "release" ]; then
+            MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"guptaashwanee/test-client","context":"client"},{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"guptaashwanee/test-server","context":"server"}]'
           else
-            MATRIX="[{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
+            if [ "${{ github.event.inputs.component }}" == "both" ]; then
+              MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"guptaashwanee/test-client","context":"client"},{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"guptaashwanee/test-server","context":"server"}]'
+            elif [ "${{ github.event.inputs.component }}" == "client" ]; then
+              MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"guptaashwanee/test-client","context":"client"}]'
+            else
+              MATRIX='[{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"guptaashwanee/test-server","context":"server"}]'
+            fi
           fi
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
         shell: bash
 
   build-and-deploy:
