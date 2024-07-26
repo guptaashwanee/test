@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/guptaashwanee/test/compare/v1.6.1...v1.6.2) (2024-07-26)
+
+
+### Bug Fixes
+
+* **workflow:** refactor ([0706b6d](https://github.com/guptaashwanee/test/commit/0706b6d52de90750f8dc4fdd47c1d245c4f95dca))
+
 ## [1.6.1](https://github.com/guptaashwanee/test/compare/v1.6.0...v1.6.1) (2024-07-26)
 
 
