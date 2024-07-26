@@ -73,20 +73,25 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Prepare Docker Tags
         id: prepare_tags
+        if: github.event_name != 'release'
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.custom_tags }}" ]]; then
-            IFS=',' read -r -a custom_tags_array <<< "${{ github.event.inputs.custom_tags }}"
-            for tag in "${custom_tags_array[@]}"; do
-              custom_tag_list+="${{ matrix.image }}:${tag},"
-            done
-            custom_tag_list="${custom_tag_list%,}" # Remove trailing comma
-            echo "CUSTOM_TAGS=${custom_tag_list}" >> $GITHUB_ENV
-          else
-            echo "CUSTOM_TAGS=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
+          CUSTOM_TAGS="${{ github.event.inputs.custom_tags }}"
+          GENERATED_TAGS="${{ steps.meta.outputs.tags }}"
+          if [ -z "$CUSTOM_TAGS" ]; then
+            echo "CUSTOM_TAGS=$GENERATED_TAGS" >> $GITHUB_ENV
+            exit 0
           fi
-      - name: Print Docker Tags
-        run: |
-          echo "Docker Tags: ${{ env.CUSTOM_TAGS }}"
+          IFS=',' read -r -a CUSTOM_TAG_ARRAY <<< "$CUSTOM_TAGS"
+          IFS=',' read -r -a GENERATED_TAG_ARRAY <<< "$GENERATED_TAGS"
+          NEW_TAGS=""
+          for GENERATED_TAG in "${GENERATED_TAG_ARRAY[@]}"; do
+            BASE_TAG="${GENERATED_TAG%%:*}"
+            for CUSTOM_TAG in "${CUSTOM_TAG_ARRAY[@]}"; do
+              NEW_TAGS="$NEW_TAGS,$BASE_TAG:$CUSTOM_TAG"
+            done
+          done
+          NEW_TAGS="${NEW_TAGS#,}" # Remove leading comma
+          echo "CUSTOM_TAGS=$NEW_TAGS" >> $GITHUB_ENV
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -96,5 +101,5 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64/v8
           push: true
-          tags: ${{ env.CUSTOM_TAGS }}
+          tags: ${{ github.event_name == 'release' && steps.meta.outputs.tags || env.CUSTOM_TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
