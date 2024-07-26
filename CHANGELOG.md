@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.1](https://github.com/guptaashwanee/test/compare/v1.6.0...v1.6.1) (2024-07-26)
+
+
+### Bug Fixes
+
+* **workflow:** parser ([a25ae38](https://github.com/guptaashwanee/test/commit/a25ae3818ac2fde5a4e1e585d04f4446c4f3e0ef))
+* **workflow:** test ([1025a61](https://github.com/guptaashwanee/test/commit/1025a61515def956e7e376ae2922406eb00afc66))
+
 ## [1.6.0](https://github.com/guptaashwanee/test/compare/v1.5.0...v1.6.0) (2024-07-26)
 
 
