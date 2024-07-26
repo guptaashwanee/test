@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/guptaashwanee/test/compare/v1.5.0...v1.6.0) (2024-07-26)
+
+
+### Features
+
+* **workflow:** update ([ea3f64f](https://github.com/guptaashwanee/test/commit/ea3f64feb77efff905215f30330a1620d2618fb1))
+
 ## [1.5.0](https://github.com/guptaashwanee/test/compare/v1.4.0...v1.5.0) (2024-07-26)
 
 
