@@ -27,19 +27,17 @@ jobs:
       - id: set-matrix
         run: |
           if [ "${{ github.event.inputs.component }}" == "both" ]; then
-            echo "matrix<<EOF" >> $GITHUB_OUTPUT
-            echo "[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'},{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
-            echo "EOF" >> $GITHUB_OUTPUT
+            MATRIX="[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'},{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
           elif [ "${{ github.event.inputs.component }}" == "client" ]; then
-            echo "matrix<<EOF" >> $GITHUB_OUTPUT
-            echo "[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'}]"
-            echo "EOF" >> $GITHUB_OUTPUT
+            MATRIX="[{'name':'Client','dockerfile':'client/Dockerfile.prod','image':'guptaashwanee/test-client','context':'client'}]"
           else
-            echo "matrix<<EOF" >> $GITHUB_OUTPUT
-            echo "[{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
-            echo "EOF" >> $GITHUB_OUTPUT
+            MATRIX="[{'name':'Server','dockerfile':'server/Dockerfile.prod','image':'guptaashwanee/test-server','context':'server'}]"
           fi
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "Matrix content:"
+          echo $MATRIX
         shell: bash
+        
       - name: Print matrix
         run: echo "${{ steps.set-matrix.outputs.matrix }}"    
   build-and-deploy:
