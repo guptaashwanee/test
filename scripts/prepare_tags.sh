@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CUSTOM_TAGS="${{ github.event.inputs.custom_tags }}"
-GENERATED_TAGS="${{ steps.meta.outputs.tags }}"
+CUSTOM_TAGS="$1"
+GENERATED_TAGS="$2"
 
 # If CUSTOM_TAGS is empty, use GENERATED_TAGS
 if [ -z "$CUSTOM_TAGS" ]; then

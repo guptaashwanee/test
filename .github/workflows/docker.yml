@@ -74,7 +74,7 @@ jobs:
       - name: Prepare Docker Tags
         id: prepare_tags
         if: github.event_name != 'release'
-        run: ./scripts/prepare_tags.sh
+        run: ./scripts/prepare_tags.sh "${{ github.event.inputs.custom_tags }}" "${{ steps.meta.outputs.tags }}"
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
