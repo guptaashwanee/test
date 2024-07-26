@@ -85,7 +85,8 @@ jobs:
             echo "CUSTOM_TAGS=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
           fi
       - name: Print Docker Tags
-        run: echo "Docker Tags: ${{ env.CUSTOM_TAGS }}"
+        run: |
+          echo "Docker Tags: ${{ env.CUSTOM_TAGS }}"
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
