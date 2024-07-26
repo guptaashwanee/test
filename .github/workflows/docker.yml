@@ -40,7 +40,8 @@ jobs:
             echo "EOF" >> $GITHUB_OUTPUT
           fi
         shell: bash
-
+      - name: Print matrix
+        run: echo "${{ steps.set-matrix.outputs.matrix }}"    
   build-and-deploy:
     needs: setup
     runs-on: ubuntu-latest
