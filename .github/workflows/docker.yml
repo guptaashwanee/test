@@ -75,12 +75,17 @@ jobs:
         id: prepare_tags
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.custom_tags }}" ]]; then
-            CUSTOM_TAGS=$(echo "${{ github.event.inputs.custom_tags }}" | tr ',' '\n' | sed "s|^|${{ matrix.image }}:|")
-            TAGS=$(echo "${{ steps.meta.outputs.tags }} ${CUSTOM_TAGS}" | tr ' ' '\n' | sort -u | tr '\n' ',')
-            echo "CUSTOM_TAGS=${TAGS%,}" >> $GITHUB_ENV
+            IFS=',' read -r -a custom_tags_array <<< "${{ github.event.inputs.custom_tags }}"
+            for tag in "${custom_tags_array[@]}"; do
+              custom_tag_list+="${{ matrix.image }}:${tag},"
+            done
+            custom_tag_list="${custom_tag_list%,}" # Remove trailing comma
+            echo "CUSTOM_TAGS=${custom_tag_list}" >> $GITHUB_ENV
           else
             echo "CUSTOM_TAGS=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
           fi
+      - name: Print Docker Tags
+        run: echo "Docker Tags: ${{ env.CUSTOM_TAGS }}"
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
