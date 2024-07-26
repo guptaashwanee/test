@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/guptaashwanee/test/compare/v1.4.0...v1.5.0) (2024-07-26)
+
+
+### Features
+
+* **test:** Release Trigger ([f7ac61f](https://github.com/guptaashwanee/test/commit/f7ac61f0dba504dc3aa50a9eca410b0556e1c351))
+
 ## [1.4.0](https://github.com/guptaashwanee/test/compare/v1.3.0...v1.4.0) (2024-07-26)
 
 
