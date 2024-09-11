@@ -27,14 +27,14 @@ jobs:
       - id: set-matrix
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"guptaashwanee/test-client","context":"client"},{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"guptaashwanee/test-server","context":"server"}]'
+            MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"${{ vars.DOCKER_USERNAME }}/${{ vars.CLIENT_REPO_NAME }}","context":"client"},{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"${{ vars.DOCKER_USERNAME }}/${{ vars.SERVER_REPO_NAME }}","context":"server"}]'
           else
             if [ "${{ github.event.inputs.component }}" == "both" ]; then
-              MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"guptaashwanee/test-client","context":"client"},{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"guptaashwanee/test-server","context":"server"}]'
+              MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"${{ vars.DOCKER_USERNAME }}/${{ vars.CLIENT_REPO_NAME }}","context":"client"},{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"${{ vars.DOCKER_USERNAME }}/${{ vars.SERVER_REPO_NAME }}","context":"server"}]'
             elif [ "${{ github.event.inputs.component }}" == "client" ]; then
-              MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"guptaashwanee/test-client","context":"client"}]'
+              MATRIX='[{"name":"Client","dockerfile":"client/Dockerfile.prod","image":"${{ vars.DOCKER_USERNAME }}/${{ vars.CLIENT_REPO_NAME }}","context":"client"}]'
             else
-              MATRIX='[{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"guptaashwanee/test-server","context":"server"}]'
+              MATRIX='[{"name":"Server","dockerfile":"server/Dockerfile.prod","image":"${{ vars.DOCKER_USERNAME }}/${{ vars.SERVER_REPO_NAME }}","context":"server"}]'
             fi
           fi
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
@@ -69,7 +69,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Prepare Docker Tags
         id: prepare_tags
