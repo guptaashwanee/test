@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.7.0](https://github.com/guptaashwanee/test/compare/v1.6.2...v1.7.0) (2024-09-11)
+
+
+### Features
+
+* **client:** axios setup in client ([34896c8](https://github.com/guptaashwanee/test/commit/34896c83537dcb02b27983bc4441db073bf15cda))
+* **client:** Client routing setup ([dae152a](https://github.com/guptaashwanee/test/commit/dae152a55977c81f60f240971829918cbb4fdd83))
+* **client:** clsx setup in client ([7662e24](https://github.com/guptaashwanee/test/commit/7662e24f8f74f93f49b96f293eb9337f7bd02c5e))
+* **client:** recharts setup in client ([ecff96b](https://github.com/guptaashwanee/test/commit/ecff96b3129b19521287663522361886a924e516))
+* **workflow:** Release Please workflow rename ([bbec47c](https://github.com/guptaashwanee/test/commit/bbec47c99a7210815979bbe780d5a6952258eb61))
+
+
+### Bug Fixes
+
+* **workflow:** script fix ([6c32943](https://github.com/guptaashwanee/test/commit/6c329434a22b501a6e2de73834cd23438e60e568))
+
+
+### Performance Improvements
+
+* **server:** express app innit ([68f53fb](https://github.com/guptaashwanee/test/commit/68f53fb007b021f3e184179f7fd54653fa733dd6))
+
 ## [1.6.2](https://github.com/guptaashwanee/test/compare/v1.6.1...v1.6.2) (2024-07-26)
 
 
