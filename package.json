@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@auto-it/first-time-contributor": "^11.3.0",
     "eslint": "^9.6.0",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.2"
