@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "npm",
+    "first-time-contributor",
+    "released"
+  ],
+  "owner": "guptaashwanee",
+  "repo": "anya-forge",
+  "name": "Ashwanee Kumar Gupta",
+  "email": "ashwanee@anscer.com"
+}
